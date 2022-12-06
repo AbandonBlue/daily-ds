@@ -1,6 +1,10 @@
 """
     模型重新訓練 API Server.
     正常透過排程呼叫。
+
+    ---
+
+    以雲端服務來說，是 cloud function + vertex ai 的合併替代。
 """
 
 import numpy as np
@@ -13,16 +17,16 @@ from module.model_evaluation import is_evaluation
 
 # app
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False     # 解決json中文問題
 
 # config
 config = get_json('./data/config.json')
 
 
-
 @app.route('/retraining/cancer/', methods=['GET'])
 def retraining_cancer():
     """
-        提供一個 retraining 的 API，溝通 servre 去執行 retraining。
+        提供一個 retraining 的 API，溝通 server 去執行 retraining。
         
         1. 發送 request 至此，
         2. 觸發訓練程式、模組，
@@ -43,17 +47,17 @@ def retraining_cancer():
         model = retrain(x_train, y_train)
 
         # 2.1 驗證是否比較好
-        is_better, y_pred = is_evaluation(model, x_test, y_test, config['threshold'])
+        is_better, y_pred = is_evaluation(model, x_test, y_test, config['training_threshold'])
         
         # 3. notify
         if is_better:
-            notify('line-notify', config['line-notify'], '模型訓練完成，表現較佳，可以部屬了！')
+            notify('line-notify', config['line-notify'], '\n模型訓練完成，表現較佳，可以部屬了！')
         else:
-            notify('line-notify', config['line-notify'], '模型訓練完成，表現較差，需要被檢視！')
+            notify('line-notify', config['line-notify'], '\n模型訓練完成，表現較差，需要被檢視！')
 
         return jsonify({'state': '成功執行'})
     except Exception as e:
-        notify('line-notify', config['line-notify'], f'retraining server 發生問題，請聯繫開發人員！\n錯誤訊息：\n{e}')
+        notify('line-notify', config['line-notify'], f'\nretraining server 發生問題，請聯繫開發人員！\n錯誤訊息：\n{e}')
         return jsonify({'state': '不可預期的錯誤'})
 
 

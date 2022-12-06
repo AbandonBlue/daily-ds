@@ -4,5 +4,12 @@
     "y_train_path": "",
     "x_test_path": "",
     "y_test_path": "",
-    "threshold": 0
+    "training_threshold": 0,
+    "monitoring_threshold": 0,
+    "retraining_url": "http://127.0.0.1:8001/retraining/cancer/",
+    "monitoring_url": "http://127.0.0.1:8000/monitoring/cancer/",
+    "serving_url": "http://127.0.0.1:8002/predict/cancer/",
+    "db_name_monitoring": "mlops.db",
+    "db_query_monitoring": "select * from prediction",
+    "table_name_monitoring": "prediction"
 }

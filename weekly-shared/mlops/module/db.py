@@ -36,12 +36,24 @@ def query_db(db_name, query):
     return cur.execute(query)
 
 
+def transform_db_query_to_df(db_name, db_query):
+    # column_query = "PRAGMA table_info('prediction') "
+    df = pd.DataFrame(query_db(db_name, db_query))
+    return df
+
+
+def get_column_name_from_sqlite(db_name, table_name):
+    db_query = f"PRAGMA table_info('{table_name}')"
+    df = transform_db_query_to_df(db_name, db_query)
+    column_names = df[1].tolist()
+    return column_names
+
+
 def save_prediction_data(data, db_name):
     """
         將資料儲存好。
         X, y_pred
     """
-    
     con = sqlite3.connect(db_name)      # 需要用 ab path
     cur = con.cursor()
     # data = [

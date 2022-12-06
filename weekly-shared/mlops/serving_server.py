@@ -1,5 +1,9 @@
 """
     Model API，主要用來預測的 server code.
+
+    ---
+
+    以雲端服務來說，是 cloud function / Google App Engine 的替代。
 """
 import numpy as np
 import os
@@ -12,6 +16,8 @@ from module.db import save_prediction_data, query_db
 
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False     # 解決json中文問題
+
 
 # 需要用 config
 model_name = './models/2022-11-29-11_29_08_483980rf.joblib'
@@ -20,6 +26,10 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 
 @app.route('/predict/cancer/', methods=['POST'])
 def predict_cancer():
+    """
+        Serving API，模型與外界的管道，如果要更好地完善，
+        可以搭配 Dcard 用的方式，用一些 middleware 去減少惡意呼叫。
+    """
     global model
     labels = {}
     data = request.get_json()  # {'data1': [features]}
