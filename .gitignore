@@ -5,8 +5,11 @@
 *.zip
 *.wav
 *.dat
+*.mat
+*.csv
 
 
 
 # 檔案夾
 web-scraping/airflows-pytrend
+weekly-shared/venv
